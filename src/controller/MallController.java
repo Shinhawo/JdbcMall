@@ -27,6 +27,8 @@ public class MallController {
 			System.out.println("1.상품조회  2.로그인  3.회원가입  0.종료");			
 		} else {
 			System.out.println("1.쇼핑  2.장바구니  3.주문  4.내정보  5.로그아웃  0.종료");
+			System.out.println("-----------------------------------------------------");
+			System.out.println("["+loginUser.getName()+"]님 환영합니다⊹꒰⍢⑅ ꒱꙳");
 		}
 		System.out.println("-----------------------------------------------------");
 		
@@ -227,11 +229,24 @@ public class MallController {
 	private void 로그아웃() {
 		System.out.println("<< 로그아웃 >>");
 		
+		// 인증된 사용자 정보를 삭제 >> loginUser에 있음
+		loginUser = null;
+		System.out.println("### 로그아웃되었습니다.");
 	}
 	
 	private void 내정보보기() {
 		System.out.println("<< 내 정보 보기 >>");
 		
+		// 이미 로그인 되어 있는 상태에서 확인하는 것이기 때문에 loginUser.getId()
+		User user = userService.getUserDetail(loginUser.getId());
+		System.out.println("### 사용자정보를 확인하세요.");
+		System.out.println("-----------------------------------------------------");
+		System.out.println("사용자 번호 : "+user.getNo());
+		System.out.println("사용자 아이디 : "+user.getId());
+		System.out.println("사용자 이름 : "+user.getName());
+		System.out.println("사용자 포인트 : "+user.getPoint());
+		System.out.println("가입일자 : "+user.getCreateDate());
+		System.out.println("-----------------------------------------------------");
 	}
 	
 	private void 상품조회() {

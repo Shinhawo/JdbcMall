@@ -33,4 +33,13 @@ public class UserService {
 	}
 	
 	
+	public User getUserDetail(String userId) {
+		User savedUser = userDao.getUserById(userId);
+		if (savedUser == null) {
+			throw new RuntimeException("사용자정보가 존재하지 않습니다.");
+		}
+		
+		return savedUser;
+	}
+	
 }

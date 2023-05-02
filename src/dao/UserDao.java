@@ -73,6 +73,8 @@ public class UserDao {
 				user.setId(rs.getString("user_id"));
 				user.setPassword(rs.getString("user_password"));
 				user.setName(rs.getString("user_name"));
+				user.setPoint(rs.getInt("user_point"));
+				user.setCreateDate(rs.getDate("user_create_date"));
 			}
 			
 			rs.close();
