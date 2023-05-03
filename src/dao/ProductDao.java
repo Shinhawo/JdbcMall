@@ -2,31 +2,91 @@ package dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import oracle.jdbc.proxy.annotation.Pre;
 import util.ConnUtil;
 import vo.Product;
 
 public class ProductDao {
 
-	 public List<Product> getAllProduct() {
-		String sql = "SELECT PRODUCT_NO, "
-				    +"PRODUCT_NAME, PRODUCT_MAKER, PRODUCT_PRICE, "
-				    +"PRDOUCT_DISCOUNT_RATE, PRDOUCT_STOCK, PRDOUCT_CREATE_DATE "
+	 public List<Product> getProducts() {
+		String sql = "SELECT * "
 		            +"FROM SAMPLE_PRODUCTS "
 				    +"ORDER BY PRODUCT_NO ASC";
 		
-		List<Product> products = new ArrayList<>();
-		
 		try {
-		Connection conn = ConnUtil.getConnection();
-		PreparedStatement pstmt = conn.prepareStatement(sql);
+		   	 List<Product> productlist = new ArrayList<>();
+			 
+			 Connection conn = ConnUtil.getConnection();
+			 PreparedStatement pstmt = conn.prepareStatement(sql);
+			 
+			 ResultSet rs = pstmt.executeQuery();
+			 
+			 while(rs.next()) {	
+				Product product = new Product();
+				
+				product.setNo(rs.getInt("product_no"));
+				product.setName(rs.getString("product_name"));
+				product.setMaker(rs.getString("product_maker"));
+				product.setPrice(rs.getInt("product_price"));
+				product.setDiscountRate(rs.getDouble("product_discount_rate"));
+				product.setStock(rs.getInt("product_stock"));
+				product.setCreateDate(rs.getDate("product_create_date"));
+				
+				productlist.add(product);
+			 }
+			 rs.close();
+			 pstmt.close();
+			 conn.close();
+			 
+			 return productlist;
+			 
+		 } catch (SQLException ex) {
+			throw new RuntimeException(ex);
+		}//catch
+		
+	 }// 메서드 끝
+	 
+	 
+	 public Product getProductByNo(int productNo) {
+		 String sql = "select * "
+				    + "from sample_products "
+				    + "where product_no = ? ";
+		 
+		 try {
+			 Product product = null;
+			 
+			 Connection conn = ConnUtil.getConnection();
+			 PreparedStatement pstmt = conn.prepareStatement(sql);
+		     pstmt.setInt(1, productNo);
+		     
+		     ResultSet rs = pstmt.executeQuery();
+		     
+		     if(rs.next()) {
+		    	product = new Product();
+		    	product.setNo(rs.getInt("product_no"));
+				product.setName(rs.getString("product_name"));
+				product.setMaker(rs.getString("product_maker"));
+				product.setPrice(rs.getInt("product_price"));
+				product.setDiscountRate(rs.getDouble("product_discount_rate"));
+				product.setStock(rs.getInt("product_stock"));
+				product.setCreateDate(rs.getDate("product_create_date"));
+		     }
+		     
+		     rs.close();
+		     pstmt.close();
+		     conn.close();
+			 
+			 return product;
+			 
 		} catch (SQLException ex) {
-			new RuntimeException(ex);
+			throw new RuntimeException(ex);
 		}
-		return products;
 	 }
+	 
 	
 }

@@ -1,5 +1,6 @@
 package dao;
 
+import java.security.cert.TrustAnchor;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -88,5 +89,40 @@ public class UserDao {
 		}
 	}
 	
+	public User getUserByNo(int userNo) {
+		String sql = "select * "
+				   + "from sample_users "
+				   + "where user_no = ? ";
+		
+		try {
+			User user = null;
+			Connection conn = ConnUtil.getConnection();
+			PreparedStatement ptmst = conn.prepareStatement(sql);
+			
+			// 전달받은 userId를 사용
+			ptmst.setInt(1, userNo);
+			
+			ResultSet rs = ptmst.executeQuery();
+			while(rs.next()) {
+				// 객체를 생성해야 담을 수 있다.
+				user = new User();
+				user.setNo(rs.getInt("user_no"));
+				user.setId(rs.getString("user_id"));
+				user.setPassword(rs.getString("user_password"));
+				user.setName(rs.getString("user_name"));
+				user.setPoint(rs.getInt("user_point"));
+				user.setCreateDate(rs.getDate("user_create_date"));
+			}
+			
+			rs.close();
+			ptmst.close();
+			conn.close();
+			
+			return user;
+			
+		} catch (SQLException ex) {
+			throw new RuntimeException(ex);
+		}
+	}
 	
 }
