@@ -1,6 +1,5 @@
 package dao;
 
-import java.security.cert.TrustAnchor;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -124,5 +123,32 @@ public class UserDao {
 			throw new RuntimeException(ex);
 		}
 	}
+	
+	public void updateUser(User user) {
+		
+		String sql = "update sample_users "
+				   + "set "
+				   + "		user_password = ?, "
+				   + "		user_point = ? "
+				   + "where user_no = ? ";
+		
+		try {
+			Connection conn = ConnUtil.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, user.getPassword());
+			pstmt.setInt(2, user.getPoint());
+			pstmt.setInt(3, user.getNo());
+			
+			pstmt.executeUpdate();
+			
+			pstmt.close();
+			conn.close();
+			
+		} catch (SQLException ex) {
+			throw new RuntimeException(ex);
+		}
+		
+	}
+	
 	
 }

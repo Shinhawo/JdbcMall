@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dto.CartItemDto;
-import oracle.net.nt.TcpMultiplexer;
 import util.ConnUtil;
 import vo.CartItem;
 
@@ -40,7 +39,7 @@ public class CartItemDao {
 	} // 메서드 끝
 	
 	
-	public CartItem getCartItem(int userNo, int productNo) {
+	public CartItem getCartItems(int userNo, int productNo) {
 		
 		String sql = "SELECT * "
 				   + "FROM SAMPLE_CART_ITEMS "
@@ -56,7 +55,7 @@ public class CartItemDao {
 			pstmt.setInt(2, productNo);
 			
 			ResultSet rs = pstmt.executeQuery();
-			if(rs.next()) {
+			while(rs.next()) {
 				cartItem = new CartItem();
 				cartItem.setUserNo(rs.getInt("user_no"));
 				cartItem.setProductNo(rs.getInt("product_no"));

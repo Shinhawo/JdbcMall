@@ -4,12 +4,16 @@ import java.util.List;
 
 import dto.CartItemDto;
 import dto.CartItemListDto;
+import dto.OrderDetailDto;
+import dto.OrderItemDto;
 import service.CartService;
 import service.OrderService;
 import service.ProductService;
 import service.UserService;
 import util.KeyboardReader;
 import vo.CartItem;
+import vo.Order;
+import vo.PointHistory;
 import vo.Product;
 import vo.User;
 
@@ -334,7 +338,12 @@ public class MallController {
 	
 	private void 장바구니에서구매하기() {
 		System.out.println("<< 장바구니에서 구매하기 >>");
+		System.out.println("### 장바구니에 추가된 모든 상품을 구매합니다.");
+		System.out.println();
 		
+		cartService.buy(loginUser.getNo());
+		
+		System.out.println("### 장바구니에 저장된 모든 상품을 구매하였습니다.");
 	}
 	
 	private void 바로구매하기() {
@@ -355,17 +364,96 @@ public class MallController {
 	
 	private void 내주문내역조회() {
 		System.out.println("<< 내 주문내역 조회 >>");
+		System.out.println("### 주문내역을 확인하세요.");
 		
+		List<Order> orders = orderService.getMyOrders(loginUser.getNo());
+		
+		if(orders.isEmpty()) {
+			System.out.println("### 주문내역이 존재하지 않습니다.ŏ̥̥̥̥םŏ̥̥̥̥");
+		} else {
+			System.out.println("--------------------------------------------------------");
+			System.out.println("주문번호\t주문날짜\t\t결재금액\t적립포인트 (❁´▽`❁)");
+			System.out.println("--------------------------------------------------------");
+			for(Order order : orders) {
+				System.out.print(order.getNo() + "\t");
+				System.out.print(order.getCreateDate() + "\t");
+				System.out.print(order.getTotalCreditPrice() + "\t");
+				System.out.println(order.getDepositPoint());
+			}	
+			System.out.println("--------------------------------------------------------");
+			
+		}		
 	}
 	
 	private void 주문상제정보조회() {
 		System.out.println("<< 주문 상제정보 조회 >>");
+		System.out.println("### 주문번호를 입력해서 상세정보를 확인하세요.");
+		System.out.println();
 		
-	}
+		System.out.println("### 주문번호를 입력하세요.");
+		int orderNo = keyboardReader.readInt();
+		System.out.println();
+		
+		// 다른사람의 주문내역 볼 수 없게 하기
+		OrderDetailDto dto = orderService.getOrderDetail(orderNo, loginUser.getNo());
+		
+		Order order = dto.getOrder();
+		List<OrderItemDto> items = dto.getItemsDtos();
+		
+		System.out.println("### ["+loginUser.getName()+"]님의 주문정보 ( ღ'ᴗ'ღ )");
+		System.out.println("---------------------------------------------------------");
+		System.out.println("주문번호 : "+ order.getNo());
+		System.out.println("주문날짜 : "+ order.getCreateDate());
+		System.out.println("주문상태 : "+ order.getStatus());
+		System.out.println("주문금액 : "+ order.getTotalOrderPrice());
+		System.out.println("사용 포인트 : "+ order.getUsedPoint());
+		System.out.println("결제금액 : "+ order.getTotalCreditPrice());
+		System.out.println("적립 포인트 : "+ order.getDepositPoint());
+		System.out.println("---------------------------------------------------------");
+		System.out.println();
+		
+		System.out.println("### 주문상품 정보 ( ღ'ᴗ'ღ )");
+		System.out.println("---------------------------------------------------------");
+		System.out.println("상품번호\t상품가격\t구매수량\t구매금액\t상품이름");
+		System.out.println("---------------------------------------------------------");
+		for(OrderItemDto item :items) {
+			System.out.print(item.getNo() + "\t");
+			System.out.print(item.getPrice() + "\t");
+			System.out.print(item.getAmount() + "\t");
+			System.out.print(item.getOrderPrice() + "\t");
+			System.out.println(item.getName() );
+		
+		}
+		System.out.println("---------------------------------------------------------");
+	
+	} 
 	
 	private void 포인트변경이력조회() {
 		System.out.println("<< 포인트 변경이력 조회 >>");
+		System.out.println("### 포인트 변경 이력을 확인하세요.");
+		System.out.println();
 		
+		List<PointHistory> histories = orderService.getMyPointHistories(loginUser.getNo());
+		
+		if (histories.isEmpty()) {
+			System.out.println("### 포인트 변경 이력이 존재하지 않습니다.૮⋆*•·̫•*𓈒ა");
+		} else {
+			System.out.println("### 포인트 변경 이력 정보૮ᐡ•͈ ·̫ •͈ᐡა");
+			System.out.println("------------------------------------------------------");
+			System.out.println("순번\t적립포인트\t누적포인트\t변경일자");
+			System.out.println("------------------------------------------------------");
+		
+			int count = 1;
+			for(PointHistory history : histories) {
+				System.out.print(count + "\t");
+				System.out.print(history.getDepositPoint() + "\t");
+				System.out.print(history.getCurrentPoint() + "\t");
+				System.out.println(history.getCreateDate());
+				count++;
+			}
+			System.out.println("------------------------------------------------------");
+		}
+	
 	}
 	
 	public static void main(String[] args) {

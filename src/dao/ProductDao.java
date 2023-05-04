@@ -66,7 +66,7 @@ public class ProductDao {
 		     
 		     ResultSet rs = pstmt.executeQuery();
 		     
-		     if(rs.next()) {
+		     while(rs.next()) {
 		    	product = new Product();
 		    	product.setNo(rs.getInt("product_no"));
 				product.setName(rs.getString("product_name"));
@@ -88,5 +88,46 @@ public class ProductDao {
 		}
 	 }
 	 
+	 
+	 public void updateProduct(Product product) {
+		 
+		 String sql = "UPDATE SAMPLE_PRODUCTS "
+				    + "SET "
+				    + "		PRODUCT_PRICE = ?, "
+				    + "		PRODUCT_DISCOUNT_RATE = ?, "
+				    + "		PRODUCT_STOCK = ? "
+				    + "WHERE PRODUCT_NO = ? ";
+		 
+		 try {
+			Connection conn = ConnUtil.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, product.getPrice());
+			pstmt.setDouble(2, product.getDiscountRate());
+			pstmt.setInt(3, product.getStock());
+			pstmt.setInt(4, product.getNo());
+			
+			pstmt.executeUpdate();
+			
+			pstmt.close();
+			conn.close();
+			 
+		} catch (SQLException ex) {
+			throw new RuntimeException(ex);
+		}
+		 
+	 } // 메서드 끝
+	 
+	 
 	
 }
+
+
+
+
+
+
+
+
+
+
+
